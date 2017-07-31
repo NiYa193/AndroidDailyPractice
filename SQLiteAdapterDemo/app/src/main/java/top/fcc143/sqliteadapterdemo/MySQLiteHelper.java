@@ -5,10 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-
-/**
- *
- */
 public class MySQLiteHelper extends SQLiteOpenHelper {
     /**
      * 构造函数
@@ -35,7 +31,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         String sql = "create table person(_id int primary key, name varchar(10), age int(3))";
         db.execSQL(sql);
     }
-
 
     /**
      * 当数据库版本更新时回调的函数
