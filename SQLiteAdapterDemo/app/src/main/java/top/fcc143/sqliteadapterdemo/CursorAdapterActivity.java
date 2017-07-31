@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import static top.fcc143.sqliteadapterdemo.R.id.parent;
+
 public class CursorAdapterActivity extends AppCompatActivity {
 
     private ListView lv;
@@ -37,14 +39,14 @@ public class CursorAdapterActivity extends AppCompatActivity {
         Cursor cursor = DbManager.selectDataBySql(db, selectSql, null);
         //Cursor cursor = db.rawQuery("select * from" + Constant.DATABASE_NAME, null);
 
-
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.layout, cursor,
+        //如下对应两种方法，只有SimpleCursorAdapter可以用得上，另外一个不能使用
+        /*SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.layout, cursor,
                 new String[]{Constant.ID, Constant.NAME, Constant.AGE},
                 new int[]{R.id.tv_id, R.id.tv_name, R.id.tv_age},
                 SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         lv.setAdapter(adapter);
 
-
+*/
 
         //MyCursorAdapter adapter = new MyCursorAdapter(this, cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         //lv.setAdapter(adapter);
@@ -65,7 +67,8 @@ public class CursorAdapterActivity extends AppCompatActivity {
          */
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-            View view = LayoutInflater.from(CursorAdapterActivity.this).inflate(R.layout.layout,null);
+            //View view = LayoutInflater.from(CursorAdapterActivity.this).inflate(R.layout.layout,null);
+            View view = LayoutInflater.from(CursorAdapterActivity.this).inflate(R.layout.layout, lv, false);
             return view;//当回调view时，就知道每一项布局是什么样的
         }
 
