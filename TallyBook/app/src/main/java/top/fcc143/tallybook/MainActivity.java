@@ -1,5 +1,6 @@
 package top.fcc143.tallybook;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,8 +17,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private List<CostBean> mCostBeanList;
-
-
+    private DatabaseHelper mDatabaseHelper;
 
 
     @Override
@@ -27,10 +27,15 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Writed by Fcc.start
+
+        mDatabaseHelper = new DatabaseHelper(this);
         mCostBeanList = new ArrayList<>();
         ListView costList = (ListView) findViewById(R.id.lv_main);
         initCostData();
         costList.setAdapter(new CostListAdapter(this, mCostBeanList));
+
+        //Writed by Fcc.end
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -45,14 +50,29 @@ public class MainActivity extends AppCompatActivity {
 
     //测试用数据
     private void initCostData() {
-        for (int i = 0; i < 60; i++) {
+        //创建之前先把之前的数据都清空
+        mDatabaseHelper.deleteAllData();
+        //将数据插入数据库
+        for (int i = 1; i <= 60; i++) {
             CostBean costBean = new CostBean();
-            costBean.costTitle = "Fcc";
-            costBean.costDate = "11-11";
+            costBean.costTitle = "豆豆" + i;
+            costBean.costDate = "10-04";
             costBean.costMoney = "20";
-            mCostBeanList.add(costBean);
+            mDatabaseHelper.insertCost(costBean);
         }
 
+        //取出数据
+        Cursor cursor = mDatabaseHelper.getAllCostData();
+        if(cursor != null){
+            while(cursor.moveToNext()){
+                CostBean costBean = new CostBean();
+                costBean.costTitle = cursor.getString(cursor.getColumnIndex("cost_title"));
+                costBean.costDate = cursor.getString(cursor.getColumnIndex("cost_date"));
+                costBean.costMoney = cursor.getString(cursor.getColumnIndex("cost_money"));
+                mCostBeanList.add(costBean);
+            }
+            cursor.close();
+        }
     }
 
     @Override
