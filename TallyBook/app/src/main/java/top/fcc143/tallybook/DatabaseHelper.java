@@ -18,6 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        //创建数据库
         db.execSQL("create table if not exists TallyBook(" +
                 "_id integer primary key, " +
                 "cost_title varchar, " +
