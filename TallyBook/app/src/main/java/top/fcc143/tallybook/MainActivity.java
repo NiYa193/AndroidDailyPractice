@@ -1,14 +1,19 @@
 package top.fcc143.tallybook;
 
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -18,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<CostBean> mCostBeanList;
     private DatabaseHelper mDatabaseHelper;
+    private CostListAdapter adapter;
 
 
     @Override
@@ -33,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         mCostBeanList = new ArrayList<>();
         ListView costList = (ListView) findViewById(R.id.lv_main);
         initCostData();
-        costList.setAdapter(new CostListAdapter(this, mCostBeanList));
-
+        adapter = new CostListAdapter(this, mCostBeanList);
+        costList.setAdapter(adapter);
         //Writed by Fcc.end
 
 
@@ -42,24 +48,48 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+                //设置该步，才可以找到这个layout里面的控件
+                View viewDialog = inflater.inflate(R.layout.new_cost_data, null);
+                final EditText title = (EditText) viewDialog.findViewById(R.id.et_cost_title);
+                final EditText money = (EditText) viewDialog.findViewById(R.id.et_cost_money);
+                final DatePicker date = (DatePicker) viewDialog.findViewById(R.id.dp_cost_date);
+                builder.setView(viewDialog);
+                builder.setTitle("新建记录");
+                builder.setPositiveButton("好的", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        CostBean costBean = new CostBean();
+                        costBean.costTitle = title.getText().toString();
+                        costBean.costMoney = money.getText().toString();
+                        costBean.costDate = date.getYear() + "-" + (date.getMonth() + 1) + "-" +
+                                date.getDayOfMonth();
+                        mDatabaseHelper.insertCost(costBean);
+                        mCostBeanList.add(costBean);
+                        adapter.notifyDataSetChanged();
+
+                    }
+                });
+                builder.setNegativeButton("不要", null);
+                builder.create().show();
             }
         });
     }
 
     //测试用数据
     private void initCostData() {
+        //测试用代码
         //创建之前先把之前的数据都清空
-        mDatabaseHelper.deleteAllData();
-        //将数据插入数据库
-        for (int i = 1; i <= 60; i++) {
-            CostBean costBean = new CostBean();
-            costBean.costTitle = "豆豆" + i;
-            costBean.costDate = "10-04";
-            costBean.costMoney = "20";
-            mDatabaseHelper.insertCost(costBean);
-        }
+//        mDatabaseHelper.deleteAllData();
+//        //将初始数据插入数据库
+//        for (int i = 1; i <= 6; i++) {
+//            CostBean costBean = new CostBean();
+//            costBean.costTitle = "豆豆" + i;
+//            costBean.costDate = "10-04";
+//            costBean.costMoney = "20";
+//            mDatabaseHelper.insertCost(costBean);
+//        }
 
         //取出数据
         Cursor cursor = mDatabaseHelper.getAllCostData();

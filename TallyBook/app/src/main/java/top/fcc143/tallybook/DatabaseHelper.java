@@ -11,8 +11,9 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+
     public DatabaseHelper(Context context) {
-        super(context, "TallyBook", null, 1);
+        super(context, Constant.TALLY_BOOK, null, 1);
     }
 
     @Override
@@ -27,24 +28,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void insertCost(CostBean costBean) {
         SQLiteDatabase database = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("cost_title", costBean.costTitle);
-        cv.put("cost_date", costBean.costDate);
-        cv.put("cost_money", costBean.costMoney);
-        database.insert("TallyBook", null, cv);
+        cv.put(Constant.COST_TITLE, costBean.costTitle);
+        cv.put(Constant.COST_DATE, costBean.costDate);
+        cv.put(Constant.COST_MONEY, costBean.costMoney);
+        database.insert(Constant.TALLY_BOOK, null, cv);
     }
 
     public Cursor getAllCostData() {
         SQLiteDatabase database = getWritableDatabase();
         //select * from TallyBook order by ASC;
-        return database.query("TallyBook", null, null, null, null, null, "cost_date " + "ASC");
+        return database.query(Constant.TALLY_BOOK, null, null, null, null, null, Constant.COST_DATE + " ASC");
     }
 
     public void deleteAllData() {
         SQLiteDatabase database = getWritableDatabase();
-        database.delete("TallyBook", null, null);
+        database.delete(Constant.TALLY_BOOK, null, null);
     }
-
-
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
